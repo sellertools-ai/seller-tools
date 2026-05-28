@@ -1,6 +1,4 @@
-export const config = { maxDuration: 30 };
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -8,10 +6,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const apiKey = process.env.OPENROUTER_API_KEY;
-  
-  if (!apiKey) {
-    return res.status(500).json({ error: 'API key missing' });
-  }
+  if (!apiKey) return res.status(500).json({ error: 'API key missing' });
 
   try {
     const { prompt } = req.body;
@@ -38,7 +33,7 @@ export default async function handler(req, res) {
     try {
       data = JSON.parse(text);
     } catch(e) {
-      return res.status(500).json({ error: 'OpenRouter error: ' + text.slice(0, 200) });
+      return res.status(500).json({ error: 'Invalid response: ' + text.slice(0, 200) });
     }
 
     if (data.error) {
