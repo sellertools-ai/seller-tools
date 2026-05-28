@@ -10,7 +10,19 @@
 <script>
 function openTool(t){document.getElementById('modal-'+t).classList.add('open');document.body.style.overflow='hidden'}
 function closeTool(t){document.getElementById('modal-'+t).classList.remove('open');document.body.style.overflow=''}
-async function callAI(p){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:p}]})});const d=await r.json();return d.content.map(i=>i.text||'').join('')}
+async function callAI(p){
+  const r=await fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'mistralai/mistral-7b-instruct:free',
+      max_tokens:1000,
+      messages:[{role:'user',content:p}]
+    })
+  });
+  const d=await r.json();
+  return d.choices[0].message.content;
+}
 function cp(id,btn){navigator.clipboard.writeText(document.getElementById(id).textContent);const o=btn.innerHTML;btn.innerHTML='✓ Copied!';setTimeout(()=>{btn.innerHTML=o},1500)}
 async function runListing(){const name=document.getElementById('l-name').value.trim();const feat=document.getElementById('l-feat').value.trim();if(!name||!feat){alert('Please fill in product name and features.');return}const cat=document.getElementById('l-cat').value;const target=document.getElementById('l-target').value;const kw=document.getElementById('l-kw').value;document.getElementById('l-btn').disabled=true;document.getElementById('l-load').classList.add('show');document.getElementById('l-out').classList.remove('show');const p=`You are an expert Amazon SEO copywriter. Create a listing for:\nProduct: ${name}, Category: ${cat}, Features: ${feat}, Target: ${target||'general buyers'}, Keywords: ${kw||name}\nReturn ONLY this format:\nTITLE: [keyword-rich title under 200 chars]\nBULLETS:\n• [KEYWORD: benefit]\n• [KEYWORD: benefit]\n• [KEYWORD: benefit]\n• [KEYWORD: benefit]\n• [KEYWORD: benefit]\nDESCRIPTION: [150-word compelling description]`;try{const text=await callAI(p);const tm=text.match(/TITLE:\s*(.+?)(?=\nBULLETS)/s);const bm=text.match(/BULLETS:\s*([\s\S]+?)(?=DESCRIPTION:)/);const dm=text.match(/DESCRIPTION:\s*([\s\S]+)/);document.getElementById('l-title').textContent=tm?tm[1].trim():'';document.getElementById('l-bullets').textContent=bm?bm[1].trim():'';document.getElementById('l-desc').textContent=dm?dm[1].trim():'';document.getElementById('l-out').classList.add('show')}catch(e){alert('Error. Please try again.')}document.getElementById('l-btn').disabled=false;document.getElementById('l-load').classList.remove('show')}
 async function runHook(){const name=document.getElementById('h-name').value.trim();const benefit=document.getElementById('h-benefit').value.trim();if(!name||!benefit){alert('Please fill in product name and benefit.');return}const plat=document.getElementById('h-plat').value;const aud=document.getElementById('h-aud').value;document.getElementById('h-btn').disabled=true;document.getElementById('h-load').classList.add('show');document.getElementById('h-out').classList.remove('show');const p=`You are a viral marketing expert. Create 5 scroll-stopping hooks for ${plat}:\nProduct: ${name}, Benefit: ${benefit}, Audience: ${aud||'general audience'}\nRules: Each hook under 15 words, create curiosity or urgency, start differently.\nReturn ONLY 5 numbered hooks, nothing else.`;try{const text=await callAI(p);document.getElementById('h-hooks').textContent=text.trim();document.getElementById('h-out').classList.add('show')}catch(e){alert('Error. Please try again.')}document.getElementById('h-btn').disabled=false;document.getElementById('h-load').classList.remove('show')}
