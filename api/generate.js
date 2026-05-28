@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         'X-Title': 'SellerTools AI'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
+        model: 'model: 'openai/gpt-oss-120b:free',',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1000
       })
