@@ -20,10 +20,16 @@ module.exports = async function handler(req, res) {
         'X-Title': 'SellerTools AI'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-120b:free',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1000
-      })
+  models: [
+    'openai/gpt-oss-120b:free',
+    'meta-llama/llama-3.2-3b-instruct:free',
+    'google/gemma-3-4b-it:free',
+    'mistralai/mistral-7b-instruct:free'
+  ],
+  route: 'fallback',
+  messages: [{ role: 'user', content: prompt }],
+  max_tokens: 1000
+})
     });
 
     const text = await response.text();
