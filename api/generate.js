@@ -15,10 +15,10 @@ export default async function handler(req, res) {
         'X-Title': 'SellerTools AI'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3n-e4b-it:free',
+        model: 'openrouter/free',
         max_tokens: 1000,
         messages: [
-          {role: 'system', content: 'You are a professional Amazon SEO copywriter.'},
+          {role: 'system', content: 'You are a professional Amazon SEO copywriter and marketing expert.'},
           {role: 'user', content: prompt}
         ]
       })
