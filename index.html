@@ -256,17 +256,18 @@ async function runListing(){
   document.getElementById('l-btn').disabled=true;
   document.getElementById('l-load').classList.add('show');
   document.getElementById('l-out').classList.remove('show');
-  const p=`You are an expert Amazon SEO copywriter. Create a complete listing.\nProduct: ${name}\nCategory: ${cat}\nFeatures: ${feat}\nTarget customer: ${target||'general buyers'}\nMain keywords: ${kw||name}\n\nReturn ONLY in this exact format:\nTITLE: [keyword-rich title under 200 chars]\nBULLETS:\n• [BENEFIT: description]\n• [BENEFIT: description]\n• [BENEFIT: description]\n• [BENEFIT: description]\n• [BENEFIT: description]\nDESCRIPTION: [150 word compelling description]`;
+  const prompt=`You are an expert Amazon SEO copywriter. Create a listing for:\nProduct: ${name}\nCategory: ${cat}\nFeatures: ${feat}\nTarget: ${target||'general buyers'}\nKeywords: ${kw||name}\n\nReturn EXACTLY:\nTITLE: [title]\nBULLETS:\n• [bullet1]\n• [bullet2]\n• [bullet3]\n• [bullet4]\n• [bullet5]\nDESCRIPTION: [description]`;
   try{
-    const text=await callAI(p);
+    const text=await callAI(prompt);
+    if(!text){throw new Error('Empty response');}
     const tm=text.match(/TITLE:\s*(.+?)(?=\nBULLETS)/s);
     const bm=text.match(/BULLETS:\s*([\s\S]+?)(?=\nDESCRIPTION:)/);
     const dm=text.match(/DESCRIPTION:\s*([\s\S]+)/);
-    document.getElementById('l-title').textContent=tm?tm[1].trim():text;
-    document.getElementById('l-bullets').textContent=bm?bm[1].trim():'';
-    document.getElementById('l-desc').textContent=dm?dm[1].trim():'';
+    document.getElementById('l-title').textContent=tm?tm[1].trim():text.substring(0,200);
+    document.getElementById('l-bullets').textContent=bm?bm[1].trim():'See description for details.';
+    document.getElementById('l-desc').textContent=dm?dm[1].trim():text;
     document.getElementById('l-out').classList.add('show');
-  }catch(e){alert('Error: '+e.message)}
+  }catch(e){alert('Something went wrong: '+e.message);}
   document.getElementById('l-btn').disabled=false;
   document.getElementById('l-load').classList.remove('show');
 }
