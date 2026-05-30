@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, // ভ্যারিয়েবল নাম পরিবর্তন করা হয়েছে
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, //
         'HTTP-Referer': 'https://seller-tools-zeta.vercel.app',
         'X-Title': 'SellerTools AI'
       },
